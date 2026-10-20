@@ -1,0 +1,40 @@
+# Example manifest for a support chat.
+# The compose step reads this, concatenates the listed files in order,
+# strips the listed sections, and writes one system prompt file.
+
+name: support-chat
+package: chat-responses@1.0.0
+overlay: support
+
+modules:
+  - 00-foundation.md
+  - 01-tone-matrix.md
+  - 02-formatting-and-components.md
+  - 03-conversation-mechanics.md
+  - 04-trust-and-uncertainty.md
+  - 05-terminology.md
+
+types:
+  - direct-answer
+  - clarifying-question
+  - plan
+  - progress
+  - transparency
+  - completion
+  - error
+  - empty-result
+  - confirmation
+  - access-and-capability
+  - guardrail
+  - handoff
+  - suggestions
+
+team_prompt: ./support-team-prompt.md
+
+strip:
+  - builder-notes     # "## Builder notes" sections
+  - frontmatter       # YAML blocks at file top
+  - rubric            # "## Rubric" pointers in types
+  - anti-patterns     # "## Anti-patterns" sections (optional; they restate rules)
+
+output: ./build/support-chat.system.md
