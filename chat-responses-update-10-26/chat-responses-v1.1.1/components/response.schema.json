@@ -1,0 +1,771 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "chat-responses/response.schema.json",
+ "title": "Chat response",
+ "description": "Draft v0.2 \u2014 slot names and limits must match components/chat-components.md and the design system's pattern library.",
+ "type": "object",
+ "required": [
+  "response_type",
+  "parts"
+ ],
+ "additionalProperties": false,
+ "properties": {
+  "response_type": {
+   "enum": [
+    "direct-answer",
+    "clarifying-question",
+    "plan",
+    "progress",
+    "transparency",
+    "completion",
+    "error",
+    "empty-result",
+    "confirmation",
+    "guardrail",
+    "access-and-capability",
+    "handoff",
+    "suggestions"
+   ]
+  },
+  "surface": {
+   "type": "string"
+  },
+  "parts": {
+   "type": "array",
+   "minItems": 1,
+   "items": {
+    "$ref": "#/$defs/part"
+   }
+  }
+ },
+ "$defs": {
+  "part": {
+   "oneOf": [
+    {
+     "$ref": "#/$defs/text"
+    },
+    {
+     "$ref": "#/$defs/code"
+    },
+    {
+     "$ref": "#/$defs/card"
+    },
+    {
+     "$ref": "#/$defs/status"
+    },
+    {
+     "$ref": "#/$defs/steps"
+    },
+    {
+     "$ref": "#/$defs/plan"
+    },
+    {
+     "$ref": "#/$defs/progress"
+    },
+    {
+     "$ref": "#/$defs/evidence"
+    },
+    {
+     "$ref": "#/$defs/disclosure"
+    },
+    {
+     "$ref": "#/$defs/confirm"
+    },
+    {
+     "$ref": "#/$defs/system"
+    },
+    {
+     "$ref": "#/$defs/input"
+    },
+    {
+     "$ref": "#/$defs/handoff"
+    },
+    {
+     "$ref": "#/$defs/actions"
+    },
+    {
+     "$ref": "#/$defs/starters"
+    },
+    {
+     "$ref": "#/$defs/divider"
+    },
+    {
+     "$ref": "#/$defs/candidates"
+    }
+   ]
+  },
+  "text": {
+   "type": "object",
+   "required": [
+    "kind",
+    "body"
+   ],
+   "properties": {
+    "kind": {
+     "const": "text"
+    },
+    "body": {
+     "type": "string"
+    }
+   },
+   "additionalProperties": false
+  },
+  "code": {
+   "type": "object",
+   "required": [
+    "kind",
+    "language",
+    "code",
+    "applied"
+   ],
+   "properties": {
+    "kind": {
+     "const": "code"
+    },
+    "language": {
+     "type": "string"
+    },
+    "title": {
+     "type": "string",
+     "maxLength": 60
+    },
+    "code": {
+     "type": "string"
+    },
+    "applied": {
+     "type": "boolean"
+    },
+    "target": {
+     "type": "string",
+     "maxLength": 60
+    },
+    "variant": {
+     "enum": [
+      "block",
+      "diff"
+     ]
+    }
+   },
+   "additionalProperties": false
+  },
+  "card": {
+   "type": "object",
+   "required": [
+    "kind",
+    "object_type",
+    "title"
+   ],
+   "properties": {
+    "kind": {
+     "const": "card"
+    },
+    "object_type": {
+     "enum": [
+      "agent",
+      "agent_version",
+      "run",
+      "test_suite",
+      "skill",
+      "tool",
+      "mcp_server",
+      "knowledge_source",
+      "dataset",
+      "query",
+      "notebook",
+      "cluster",
+      "experiment",
+      "training_run",
+      "sweep",
+      "model",
+      "model_version",
+      "validation",
+      "use_case",
+      "policy",
+      "finding",
+      "access_request",
+      "ticket",
+      "incident",
+      "dashboard",
+      "workspace",
+      "other"
+     ]
+    },
+    "title": {
+     "type": "string",
+     "maxLength": 60
+    },
+    "subtitle": {
+     "type": "string",
+     "maxLength": 60
+    },
+    "summary": {
+     "type": "string",
+     "maxLength": 120
+    },
+    "ref": {
+     "type": "string"
+    }
+   },
+   "additionalProperties": false
+  },
+  "status": {
+   "type": "object",
+   "required": [
+    "kind",
+    "verdict"
+   ],
+   "properties": {
+    "kind": {
+     "const": "status"
+    },
+    "verdict": {
+     "enum": [
+      "ran_ok",
+      "failed",
+      "stopped",
+      "partial"
+     ]
+    },
+    "detail": {
+     "type": "string",
+     "maxLength": 40
+    },
+    "metrics": {
+     "type": "array",
+     "maxItems": 5,
+     "items": {
+      "type": "object",
+      "required": [
+       "label",
+       "value"
+      ],
+      "properties": {
+       "label": {
+        "type": "string"
+       },
+       "value": {
+        "type": "string"
+       }
+      },
+      "additionalProperties": false
+     }
+    }
+   },
+   "additionalProperties": false
+  },
+  "steps": {
+   "type": "object",
+   "required": [
+    "kind",
+    "summary",
+    "items"
+   ],
+   "properties": {
+    "kind": {
+     "const": "steps"
+    },
+    "summary": {
+     "type": "string",
+     "maxLength": 80
+    },
+    "items": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "name",
+       "outcome"
+      ],
+      "properties": {
+       "name": {
+        "type": "string"
+       },
+       "outcome": {
+        "enum": [
+         "ok",
+         "failed",
+         "skipped",
+         "stopped"
+        ]
+       },
+       "summary": {
+        "type": "string",
+        "maxLength": 80
+       },
+       "duration": {
+        "type": "string"
+       },
+       "cost": {
+        "type": "string"
+       },
+       "expanded": {
+        "type": "boolean"
+       },
+       "ref": {
+        "type": "string"
+       }
+      },
+      "additionalProperties": false
+     }
+    }
+   },
+   "additionalProperties": false
+  },
+  "plan": {
+   "type": "object",
+   "required": [
+    "kind",
+    "title",
+    "outcome",
+    "steps",
+    "actions"
+   ],
+   "properties": {
+    "kind": {
+     "const": "plan"
+    },
+    "title": {
+     "type": "string",
+     "maxLength": 60
+    },
+    "outcome": {
+     "type": "string",
+     "maxLength": 160
+    },
+    "steps": {
+     "type": "array",
+     "minItems": 3,
+     "maxItems": 7,
+     "items": {
+      "type": "string",
+      "maxLength": 80
+     }
+    },
+    "assumptions": {
+     "type": "array",
+     "maxItems": 3,
+     "items": {
+      "type": "string"
+     }
+    },
+    "estimate": {
+     "type": "object",
+     "required": [],
+     "properties": {
+      "time": {
+       "type": "string"
+      },
+      "cost": {
+       "type": "string"
+      }
+     },
+     "additionalProperties": false
+    },
+    "actions": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/button"
+     }
+    }
+   },
+   "additionalProperties": false
+  },
+  "progress": {
+   "type": "object",
+   "required": [
+    "kind",
+    "label"
+   ],
+   "properties": {
+    "kind": {
+     "const": "progress"
+    },
+    "label": {
+     "type": "string",
+     "maxLength": 60
+    },
+    "estimate": {
+     "type": "string",
+     "maxLength": 30
+    },
+    "stop_point": {
+     "type": "string",
+     "maxLength": 40
+    }
+   },
+   "additionalProperties": false
+  },
+  "evidence": {
+   "type": "object",
+   "required": [
+    "kind",
+    "sources"
+   ],
+   "properties": {
+    "kind": {
+     "const": "evidence"
+    },
+    "sources": {
+     "type": "array",
+     "maxItems": 5,
+     "items": {
+      "type": "object",
+      "required": [
+       "label"
+      ],
+      "properties": {
+       "label": {
+        "type": "string"
+       },
+       "locator": {
+        "type": "string"
+       },
+       "as_of": {
+        "type": "string"
+       },
+       "ref": {
+        "type": "string"
+       }
+      },
+      "additionalProperties": false
+     }
+    }
+   },
+   "additionalProperties": false
+  },
+  "disclosure": {
+   "type": "object",
+   "required": [
+    "kind",
+    "summary",
+    "parts"
+   ],
+   "properties": {
+    "kind": {
+     "const": "disclosure"
+    },
+    "summary": {
+     "type": "string",
+     "maxLength": 80
+    },
+    "parts": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/part"
+     }
+    }
+   },
+   "additionalProperties": false
+  },
+  "confirm": {
+   "type": "object",
+   "required": [
+    "kind",
+    "consequence",
+    "reversible",
+    "actions"
+   ],
+   "properties": {
+    "kind": {
+     "const": "confirm"
+    },
+    "consequence": {
+     "type": "string",
+     "maxLength": 200
+    },
+    "reversible": {
+     "enum": [
+      "yes",
+      "no",
+      "unknown"
+     ]
+    },
+    "scope": {
+     "type": "string",
+     "maxLength": 160
+    },
+    "cost": {
+     "type": "string",
+     "maxLength": 30
+    },
+    "actions": {
+     "type": "array",
+     "minItems": 2,
+     "maxItems": 4,
+     "items": {
+      "$ref": "#/$defs/button"
+     }
+    }
+   },
+   "additionalProperties": false
+  },
+  "system": {
+   "type": "object",
+   "required": [
+    "kind",
+    "headline",
+    "actions"
+   ],
+   "properties": {
+    "kind": {
+     "const": "system"
+    },
+    "headline": {
+     "type": "string",
+     "maxLength": 80
+    },
+    "cause": {
+     "type": "string",
+     "maxLength": 160
+    },
+    "actions": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "$ref": "#/$defs/button"
+     }
+    }
+   },
+   "additionalProperties": false
+  },
+  "input": {
+   "type": "object",
+   "required": [
+    "kind",
+    "question",
+    "options"
+   ],
+   "properties": {
+    "kind": {
+     "const": "input"
+    },
+    "question": {
+     "type": "string",
+     "maxLength": 120
+    },
+    "options": {
+     "type": "array",
+     "minItems": 2,
+     "maxItems": 4,
+     "items": {
+      "type": "object",
+      "required": [
+       "label"
+      ],
+      "properties": {
+       "label": {
+        "type": "string",
+        "maxLength": 40
+       },
+       "recommended": {
+        "type": "boolean"
+       }
+      },
+      "additionalProperties": false
+     }
+    }
+   },
+   "additionalProperties": false
+  },
+  "handoff": {
+   "type": "object",
+   "required": [
+    "kind",
+    "to",
+    "handoff_kind",
+    "status"
+   ],
+   "properties": {
+    "kind": {
+     "const": "handoff"
+    },
+    "to": {
+     "type": "string",
+     "maxLength": 60
+    },
+    "handoff_kind": {
+     "enum": [
+      "team",
+      "surface",
+      "approval"
+     ]
+    },
+    "status": {
+     "enum": [
+      "offered",
+      "sent"
+     ]
+    },
+    "context_sent": {
+     "type": "array",
+     "maxItems": 5,
+     "items": {
+      "type": "string"
+     }
+    },
+    "bring": {
+     "type": "array",
+     "maxItems": 3,
+     "items": {
+      "type": "string"
+     }
+    },
+    "eta": {
+     "type": "string",
+     "maxLength": 40
+    },
+    "action": {
+     "$ref": "#/$defs/button"
+    }
+   },
+   "additionalProperties": false
+  },
+  "actions": {
+   "type": "object",
+   "required": [
+    "kind",
+    "items"
+   ],
+   "properties": {
+    "kind": {
+     "const": "actions"
+    },
+    "items": {
+     "type": "array",
+     "minItems": 1,
+     "maxItems": 3,
+     "items": {
+      "type": "object",
+      "required": [
+       "label"
+      ],
+      "properties": {
+       "label": {
+        "type": "string",
+        "maxLength": 40
+       },
+       "intent": {
+        "enum": [
+         "prompt",
+         "action"
+        ]
+       }
+      },
+      "additionalProperties": false
+     }
+    }
+   },
+   "additionalProperties": false
+  },
+  "starters": {
+   "type": "object",
+   "required": [
+    "kind",
+    "items"
+   ],
+   "properties": {
+    "kind": {
+     "const": "starters"
+    },
+    "scope_line": {
+     "type": "string",
+     "maxLength": 80
+    },
+    "items": {
+     "type": "array",
+     "minItems": 2,
+     "maxItems": 4,
+     "items": {
+      "type": "object",
+      "required": [
+       "label"
+      ],
+      "properties": {
+       "label": {
+        "type": "string",
+        "maxLength": 56
+       }
+      },
+      "additionalProperties": false
+     }
+    }
+   },
+   "additionalProperties": false
+  },
+  "divider": {
+   "type": "object",
+   "required": [
+    "kind",
+    "label"
+   ],
+   "properties": {
+    "kind": {
+     "const": "divider"
+    },
+    "label": {
+     "type": "string",
+     "maxLength": 40
+    }
+   },
+   "additionalProperties": false
+  },
+  "button": {
+   "type": "object",
+   "required": [
+    "label"
+   ],
+   "properties": {
+    "label": {
+     "type": "string",
+     "maxLength": 40
+    },
+    "role": {
+     "enum": [
+      "primary",
+      "alternative",
+      "cancel"
+     ]
+    }
+   },
+   "additionalProperties": false
+  },
+  "candidates": {
+   "type": "object",
+   "required": [
+    "kind",
+    "items"
+   ],
+   "properties": {
+    "kind": {
+     "const": "candidates"
+    },
+    "items": {
+     "type": "array",
+     "minItems": 2,
+     "maxItems": 5,
+     "items": {
+      "type": "object",
+      "required": [
+       "title",
+       "body"
+      ],
+      "properties": {
+       "title": {
+        "type": "string",
+        "maxLength": 60
+       },
+       "body": {
+        "type": "string"
+       },
+       "recommended": {
+        "type": "boolean"
+       }
+      },
+      "additionalProperties": false
+     }
+    }
+   },
+   "additionalProperties": false
+  }
+ }
+}
