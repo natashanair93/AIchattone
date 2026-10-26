@@ -1,0 +1,43 @@
+# One chat across the platform: one composed prompt per surface.
+# The prefix (modules + types) is identical in every output, so it caches;
+# only the overlay and team prompt at the end differ.
+# The app picks the prompt for the surface the user is on each turn.
+
+name: fusion-chat
+package: chat-responses@1.1.0
+
+overlays: [build, experimentation, notebooks, data, governance, support]
+
+modules:
+  - 00-foundation.md
+  - 01-tone-matrix.md
+  - 02-formatting-and-components.md
+  - 03-conversation-mechanics.md
+  - 04-trust-and-uncertainty.md
+  - 05-terminology.md
+  - 06-platform-map.md
+
+types:
+  - direct-answer
+  - clarifying-question
+  - plan
+  - progress
+  - transparency
+  - completion
+  - error
+  - empty-result
+  - confirmation
+  - access-and-capability
+  - guardrail
+  - handoff
+  - suggestions
+
+team_prompt: ./team-prompt.md
+
+strip:
+  - builder-notes
+  - frontmatter
+  - rubric
+  - anti-patterns
+
+output: ./build/{overlay}.system.md
